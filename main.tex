@@ -1,0 +1,24 @@
+\input{Contents/Packages.tex}
+\input{Contents/Header.tex}
+\input{Contents/Abstract.tex}
+\input{Contents/Acknowledgement.tex}
+\input{Contents/Config.tex}
+
+\begin{document}
+\fixmargins
+\makepreliminarypages
+\oneandhalfspace
+\pdfbookmark[section]{\contentsname}{toc}
+\tableofcontents
+
+\input{sections/Introduction.tex}
+\input{sections/Problem.tex}
+\input{sections/Conclusion.tex}
+
+\bibliographystyle{gost780u.bst} % Для соответствия требованиям об оформлении списка литературы
+\raggedright
+\bibliography{references}
+
+\input{Contents/Appendix.tex}
+
+\end{document}

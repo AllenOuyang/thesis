@@ -1,0 +1,48 @@
+\documentclass[oneside,senior,etd]{BYUPhys}
+
+\usepackage{cmap} % Для корректной кодировки в pdf
+\usepackage[utf8]{inputenc}
+\usepackage{rotating}
+\usepackage[russian]{babel}
+\usepackage{amsfonts} % Пакеты для математических символов и теорем
+\usepackage{amstext}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx} % Пакеты для вставки графики
+\usepackage{subfig}
+\usepackage{color}
+\usepackage[unicode]{hyperref}
+\usepackage[nottoc]{tocbibind} % Для того, чтобы список литературы отображался в оглавлении
+\usepackage{verbatim} % Для вставок заранее подготовленного текста в режиме as-is
+\usepackage{listings}
+
+\newcommand{\sectionbreak}{\clearpage} % Раздел с новой станицы
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{arrows,positioning}
+\usepackage{adjustbox}
+\usepackage{makecell}
+\usepackage{booktabs}
+\usepackage{boldline}
+\usepackage{xcolor}
+\usepackage{soul}
+\usepackage{url}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{pifont}
+\usepackage{indentfirst} % Делать отступ в начале первого параграфа
+
+% Общие параметры листингов
+\lstset{
+    %frame=TB,
+    showstringspaces=false,
+    tabsize=4,
+    basicstyle=\linespread{1.0}\tt\small, % делаем листинги компактнее
+    breaklines=true,
+    texcl=true, % русские буквы в комментах
+    captionpos=b,
+    aboveskip=\baselineskip,
+    commentstyle=\tt
+}
+\newcommand{\todo}[1]{\textcolor{red}{#1}}
