@@ -338,14 +338,14 @@
 % If the \makepreliminarypages macro is not run, this never gets fixed.
   \setlength{\marginparwidth}{0pt}
   \setlength{\marginparsep}{0pt}
-  \setlength{\oddsidemargin}{0.3in}
+  \setlength{\oddsidemargin}{0.1in}
   \setlength{\evensidemargin}{0in}
   \setlength{\textwidth}{6in}
-  \setlength{\topmargin}{0in}
+  \setlength{\topmargin}{-0.3in}
   \setlength{\headheight}{0.125in}
   \setlength{\headsep}{0.25in}
   \setlength{\textheight}{8.625in}
-  \setlength{\footskip}{0.25in}
+  \setlength{\footskip}{0.8in}
   \raggedbottom
 
 % Redefine the Table of Contents to deal with some blank page
@@ -383,7 +383,7 @@
 	    \begin{center}
 	    \thispagestyle{empty}
 	    \providecommand\pdfbookmark[3][]{} \pdfbookmark[1]{\@TitlePageText}{bm:Title}
-		\includegraphics[height=4cm,keepaspectratio]{./resources/msu_logo.png}\\[0.1cm]
+		\includegraphics[height=4cm,keepaspectratio]{./images/msu_logo.png}\\[0.1cm]
 	    %\vspace*{0.375in}
 	    \@University\\
 	    \@Faculty\\

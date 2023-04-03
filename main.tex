@@ -1,24 +1,20 @@
-\input{Contents/Packages.tex}
-\input{Contents/Header.tex}
-\input{Contents/Abstract.tex}
-\input{Contents/Acknowledgement.tex}
-\input{Contents/Config.tex}
+\documentclass[oneside,senior,etd]{./src/BYUPhys}
+\input{src/packages}
+\input{src/style}
 
 \begin{document}
-\fixmargins
-\makepreliminarypages
-\oneandhalfspace
-\pdfbookmark[section]{\contentsname}{toc}
-\tableofcontents
 
-\input{sections/Introduction.tex}
-\input{sections/Problem.tex}
-\input{sections/Conclusion.tex}
-
-\bibliographystyle{gost780u.bst} % Для соответствия требованиям об оформлении списка литературы
-\raggedright
-\bibliography{references}
-
-\input{Contents/Appendix.tex}
+\input{src/header}
+\input{src/abstract}
+\input{src/acknowledgement}
+\input{src/introduction}
+\input{src/task}
+\input{src/part1}
+\input{src/part2}
+\input{src/part3}
+\input{src/part4}
+\input{src/conclusion}
+\input{src/references}
+\input{src/appendix}
 
 \end{document}
