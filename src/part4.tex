@@ -2,6 +2,29 @@
 
 \subsection{Запуск задачника}
 
+\subsubsection{Установка MPICH в системе unix}
+Ниже описаны шаги по установке MPICH на различных системах UNIX:
+
+\begin{itemize}
+    \item Чтобы установить MPICH на Debian или Ubuntu:
+    \lstset{language=bash}
+    \begin{lstlisting}
+    sudo apt-get update
+    sudo apt-get install mpich
+    \end{lstlisting}
+    \item Чтобы установить MPICH на Fedora или CentOS:
+    \lstset{language=bash}
+    \begin{lstlisting}
+    sudo dnf update
+    sudo dnf install mpich
+    \end{lstlisting}
+    \item Чтобы установить MPICH на macOS:
+    \begin{lstlisting}
+    brew update
+    brew install mpich        
+    \end{lstlisting}
+\end{itemize}
+
 \subsubsection{Компиляция динамических библиотек}
 
 Чтобы получить динамические библиотеки, которые могут быть загружены ядром, мы 
@@ -16,17 +39,17 @@
 \lstset{language=bash}
 \begin{lstlisting}
 #!/bin/bash
-if ! [ -d ~/utblib ]; then mkdir ~/utblib; fi
-g++ -fPIC utbDir.cpp utilities.cpp -shared -o ~/utblib/libutbDir.so
-g++ -fPIC utbFile.cpp utilities.cpp -shared -o ~/utblib/libutbFile.so
-g++ -fPIC utbText.cpp utilities.cpp -shared -o ~/utblib/libutbText.so
-g++ -fPIC utbShell.cpp utilities.cpp -shared -o ~/utblib/libutbShell.so
-g++ -fPIC utbBegin.cpp pt4utilities.cpp udata.cpp uprint.cpp -shared -o ~/utblib/libutbBegin.so
-g++ -fPIC utbMPI1Proc.cpp pt4utilities.cpp udata.cpp uprint.cpp -shared -o ~/utblib/libutbMPI1Proc.so
-g++ -fPIC utbMPI2Send.cpp pt4utilities.cpp udata.cpp uprint.cpp -shared -o ~/utblib/libutbMPI2Send.so
-g++ -fPIC utbMPI3Coll.cpp pt4utilities.cpp udata.cpp uprint.cpp -shared -o ~/utblib/libutbMPI3Coll.so
-g++ -fPIC utbMPI4Type.cpp pt4utilities.cpp udata.cpp uprint.cpp -shared -o ~/utblib/libutbMPI4Type.so
-g++ -fPIC utbMPI5Comm.cpp pt4utilities.cpp udata.cpp uprint.cpp -shared -o ~/utblib/libutbMPI5Comm.so
+if ! [ -d ./utblib ]; then mkdir ./utblib; fi
+g++ -fPIC -std=c++17 -Wno-attributes src/utbDir.cpp src/utilities.cpp -shared -o ./utblib/libutbDir.so
+g++ -fPIC -std=c++17 -Wno-attributes src/utbFile.cpp src/utilities.cpp -shared -o ./utblib/libutbFile.so
+g++ -fPIC -std=c++17 -Wno-attributes src/utbText.cpp src/utilities.cpp -shared -o ./utblib/libutbText.so
+g++ -fPIC -std=c++17 -Wno-attributes src/utbShell.cpp src/utilities.cpp -shared -o ./utblib/libutbShell.so
+g++ -fPIC -std=c++17 -Wno-attributes src/utbBegin.cpp src/pt4utilities.cpp src/udata.cpp src/uprint.cpp -shared -o ./utblib/libutbBegin.so
+g++ -fPIC -std=c++17 -Wno-attributes src/utbMPI1Proc.cpp src/pt4utilities.cpp src/udata.cpp src/uprint.cpp -shared -o ./utblib/libutbMPI1Proc.so
+g++ -fPIC -std=c++17 -Wno-attributes src/utbMPI2Send.cpp src/pt4utilities.cpp src/udata.cpp src/uprint.cpp -shared -o ./utblib/libutbMPI2Send.so
+g++ -fPIC -std=c++17 -Wno-attributes src/utbMPI3Coll.cpp src/pt4utilities.cpp src/udata.cpp src/uprint.cpp -shared -o ./utblib/libutbMPI3Coll.so
+g++ -fPIC -std=c++17 -Wno-attributes src/utbMPI4Type.cpp src/pt4utilities.cpp src/udata.cpp src/uprint.cpp -shared -o ./utblib/libutbMPI4Type.so
+g++ -fPIC -std=c++17 -Wno-attributes src/utbMPI5Comm.cpp src/pt4utilities.cpp src/udata.cpp src/uprint.cpp -shared -o ./utblib/libutbMPI5Comm.so
 \end{lstlisting}
 
 Перед компиляцией мы проверим, существует ли каталог utblib в каталоге текущего
@@ -77,6 +100,15 @@ export LD_LIBRARY_PATH
 
 В файле runtest.cmd мы экспортируем переменную LD\_LIBRARY\_PATH, 
 которая сообщает компилятору, где находятся все динамические библиотеки.
+
+Во время выполнения написанные нами тестовые файлы компилируются, и если в процессе компиляции что-то пойдет не так, на экран будет выведено сообщение об ошибке\ref{error}.
+\begin{figure}[htbp]%
+    \centering
+    \includegraphics[width=1\linewidth]{images/error.jpg}%子图文件名
+    \caption{Log info.}%总标题
+    \label{error}%总标签
+\end{figure}
+
 
 \subsection{Примеры использования разработанных групп заданий}
 

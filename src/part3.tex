@@ -367,356 +367,356 @@ utbMPI1Proc::utbMPI1Proc()
 В задачах используются различные функции MPI, такие как MPI\_Comm\_rank, MPI\_Comm\_size, MPI\_Send и MPI\_Recv. Задачи покрывают различные аспекты параллельных вычислений, такие как ввод и вывод данных, вычисления в зависимости от номера процесса и обмен данными между процессами.
 
 Решение этих задач требует от студентов умения анализировать поставленную задачу и правильно применять соответствующие функции MPI. Это также требует от них умения работать с различными типами данных и умения разрабатывать эффективные алгоритмы для параллельных вычислений.
-\subsubsection{MPI2Send}
-
-\lstset{language=c++}
-\begin{lstlisting}
-#include "tasklib.hpp"
-#include "pt4utilities.hpp"
-
-class utbMPI2Send : public TaskLib
-{
-private:
-	std::string task_group;
-
-public:
-	utbMPI2Send();
-	virtual ~utbMPI2Send() {}
-
-	virtual void utb_print_task_info(int task_num, int language_option)
-	{
-		pt4_print_task_info(task_group, task_num, language_option);
-	}
-
-	virtual void utb_generate_task_test(int task_num, int test_num)
-	{
-		pt4_generate_task_test(task_group, task_num, test_num);
-	}
-
-	virtual void utb_generate_task_control(int task_num) {}
-
-	virtual void utb_print_extra_info(int task_num)
-	{
-		pt4_print_extra_info(task_group, task_num);
-	}
-
-	virtual int utb_check_program(int test_num) const
-	{
-		return pt4_check_program(task_group, test_num);
-	}
-
-	// friend class
-	friend class UnixTaskbook;
-};
-
-extern "C" TaskLib *create()
-{
-	return new utbMPI2Send;
-}
-
-extern "C" void destroy(TaskLib *t)
-{
-	delete t;
-}
-
-utbMPI2Send::utbMPI2Send()
-{
-#if defined __linux__
-	library_name = "libutbMPI2Send.so";
-#elif defined __APPLE__
-	library_name = "libutbMPI2Send.dylib";
-#endif
-
-	compiler = "mpicc";
-	compile_argv = {compiler, "-Wall", "-w", "", "ut1.c", "-o"};
-
-	execute_argv = {"mpiexec", "-np", std::to_string(pt4_mpi_get_size())};
-
-	task_group = "MPI2Send";
-	task_count = 32;
-	total_test_count = 3;
-
-	print_file = false;
-	print_task_info = true;
-}
-
-\end{lstlisting}
-
-Задачи этой группы\cite{ref12} в основном связаны с коммуникацией с MPI (Message Passing Interface). 
-Эти задачи включают отправку и получение данных с помощью MPI, как блокирующие, так 
-и неблокирующие коммуникации, и проверяют навыки студентов в области программирования 
-и параллельных вычислений. Задачи по блокирующей коммуникации проверяют знания 
-студентов об использовании основных функций, таких как MPI\_Send и MPI\_Recv, а также 
-о том, как выполнять операции сортировки и кэширования данных. Задачи по неблокирующей 
-коммуникации проверяют, как студенты используют такие функции, как MPI\_Issend, 
-MPI\_Wait, MPI\_Recv и MPI\_Test для асинхронной коммуникации и как справляться с 
-проблемами отладки, которые могут возникнуть при параллельных вычислениях.
-
-\subsubsection{MPI3Coll}
-
-\lstset{language=c++}
-\begin{lstlisting}
-#include "tasklib.hpp"
-#include "pt4utilities.hpp"
-
-class utbMPI3Coll : public TaskLib
-{
-private:
-	std::string task_group;
-
-public:
-	utbMPI3Coll();
-	virtual ~utbMPI3Coll() {}
-
-	virtual void utb_print_task_info(int task_num, int language_option)
-	{
-		pt4_print_task_info(task_group, task_num, language_option);
-	}
-
-	virtual void utb_generate_task_test(int task_num, int test_num)
-	{
-		pt4_generate_task_test(task_group, task_num, test_num);
-	}
-
-	virtual void utb_generate_task_control(int task_num) {}
-
-	virtual void utb_print_extra_info(int task_num)
-	{
-		pt4_print_extra_info(task_group, task_num);
-	}
-
-	virtual int utb_check_program(int test_num) const
-	{
-		return pt4_check_program(task_group, test_num);
-	}
-
-	// friend class
-	friend class UnixTaskbook;
-};
-
-extern "C" TaskLib *create()
-{
-	return new utbMPI3Coll;
-}
-
-extern "C" void destroy(TaskLib *t)
-{
-	delete t;
-}
-
-utbMPI3Coll::utbMPI3Coll()
-{
-#if defined __linux__
-	library_name = "libutbMPI3Coll.so";
-#elif defined __APPLE__
-	library_name = "libutbMPI3Coll.dylib";
-#endif
-
-	compiler = "mpicc";
-	compile_argv = {compiler, "-Wall", "-w", "", "ut1.c", "-o"};
-
-	execute_argv = {"mpiexec", "-np", std::to_string(pt4_mpi_get_size())};
-
-	task_group = "MPI3Coll";
-	task_count = 28;
-	total_test_count = 3;
-
-	print_file = false;
-	print_task_info = true;
-}
-\end{lstlisting}
-
-Задачи этой группы\cite{ref13} относятся к параллельному программированию с использованием 
-библиотеки MPI (Message Passing Interface) для обмена данными между процессами. В 
-каждом вопросе ученику предлагается написать программу на языке программирования, 
-которая выполняет определенную задачу с помощью функций MPI.
-
-Задачи проверяют знание основных функций MPI для передачи данных между 
-процессами, таких как MPI\_Bcast, MPI\_Gather, MPI\_Scatter, MPI\_Reduce и 
-MPI\_Allreduce, а также способность к решению задач по передаче данных и 
-совместной обработке данных между процессами. Решение этих задач помогает 
-ученикам улучшить навыки в области параллельного программирования, такие как 
-эффективное использование ресурсов, разбиение задач на небольшие подзадачи, передача 
-данных между процессами и совместная обработка данных.
-
-\subsubsection{MPI4Type}
-
-\lstset{language=c++}
-\begin{lstlisting}
-#include "tasklib.hpp"
-#include "pt4utilities.hpp"
-
-class utbMPI4Type : public TaskLib
-{
-private:
-	std::string task_group;
-
-public:
-	utbMPI4Type();
-	virtual ~utbMPI4Type() {}
-
-	virtual void utb_print_task_info(int task_num, int language_option)
-	{
-		pt4_print_task_info(task_group, task_num, language_option);
-	}
-
-	virtual void utb_generate_task_test(int task_num, int test_num)
-	{
-		pt4_generate_task_test(task_group, task_num, test_num);
-	}
-
-	virtual void utb_generate_task_control(int task_num) {}
-
-	virtual void utb_print_extra_info(int task_num)
-	{
-		pt4_print_extra_info(task_group, task_num);
-	}
-
-	virtual int utb_check_program(int test_num) const
-	{
-		return pt4_check_program(task_group, test_num);
-	}
-
-	// friend class
-	friend class UnixTaskbook;
-};
-
-extern "C" TaskLib *create()
-{
-	return new utbMPI4Type;
-}
-
-extern "C" void destroy(TaskLib *t)
-{
-	delete t;
-}
-
-utbMPI4Type::utbMPI4Type()
-{
-#if defined __linux__
-	library_name = "libutbMPI4Type.so";
-#elif defined __APPLE__
-	library_name = "libutbMPI4Type.dylib";
-#endif
-
-	compiler = "mpicc";
-	compile_argv = {compiler, "-Wall", "-w", "", "ut1.c", "-o"};
-
-	execute_argv = {"mpiexec", "-np", std::to_string(pt4_mpi_get_size())};
-
-	task_group = "MPI4Type";
-	task_count = 22;
-	total_test_count = 3;
-
-	print_file = false;
-	print_task_info = true;
-}
-\end{lstlisting}
-
-Задачи этой группы\cite{ref14} относятся к параллельному программированию 
-с использованием MPI (Message Passing Interface), протокола для 
-обмена сообщениями между процессами, работающими на разных узлах 
-вычислительного кластера. Задачи касаются создания и использования 
-производных типов данных и упаковки данных для передачи между процессами.
-
-Ученик проверяет свои знания по работе с MPI и способности 
-создавать производные типы данных и эффективно упаковывать 
-данные для передачи между процессами. Также ученик улучшает 
-свои навыки работы с функциями MPI\_Send, MPI\_Recv, MPI\_Pack и 
-MPI\_Unpack, а также создания новых типов данных с помощью 
-функций MPI\_Type\_create\_resized и MPI\_Type\_struct. Кроме того, 
-ученик практикует работу с коллективными операциями MPI.
-
-\subsubsection{MPI5Comm}
-
-\lstset{language=c++}
-\begin{lstlisting}
-#include "tasklib.hpp"
-#include "pt4utilities.hpp"
-
-class utbMPI5Comm : public TaskLib
-{
-private:
-	std::string task_group;
-
-public:
-	utbMPI5Comm();
-	virtual ~utbMPI5Comm() {}
-
-	virtual void utb_print_task_info(int task_num, int language_option)
-	{
-		pt4_print_task_info(task_group, task_num, language_option);
-	}
-
-	virtual void utb_generate_task_test(int task_num, int test_num)
-	{
-		pt4_generate_task_test(task_group, task_num, test_num);
-	}
-
-	virtual void utb_generate_task_control(int task_num) {}
-
-	virtual void utb_print_extra_info(int task_num)
-	{
-		pt4_print_extra_info(task_group, task_num);
-	}
-
-	virtual int utb_check_program(int test_num) const
-	{
-		return pt4_check_program(task_group, test_num);
-	}
-
-	// friend class
-	friend class UnixTaskbook;
-};
-
-extern "C" TaskLib *create()
-{
-	return new utbMPI5Comm;
-}
-
-extern "C" void destroy(TaskLib *t)
-{
-	delete t;
-}
-
-utbMPI5Comm::utbMPI5Comm()
-{
-#if defined __linux__
-	library_name = "libutbMPI5Comm.so";
-#elif defined __APPLE__
-	library_name = "libutbMPI5Comm.dylib";
-#endif
-
-	compiler = "mpicc";
-	compile_argv = {compiler, "-Wall", "-w", "", "ut1.c", "-o"};
-
-	execute_argv = {"mpiexec", "-np", std::to_string(pt4_mpi_get_size())};
-
-	task_group = "MPI5Comm";
-	task_count = 32;
-	total_test_count = 3;
-
-	print_file = false;
-	print_task_info = true;
-}
-\end{lstlisting}
-
-В задачах этой группы\cite{ref15} речь идет о программировании с использованием 
-MPI (Message Passing Interface), который является стандартом для
- взаимодействия параллельных программ. Основной целью всех задач 
- является создание новых коммуникаторов и/или виртуальных топологий для
-  обеспечения эффективного взаимодействия между процессами.
-
-В задачах проверяются знания студента по использованию функций 
-MPI\_Comm\_group, MPI\_Group\_incl, MPI\_Group\_excl, MPI\_Comm\_create,
- MPI\_Comm\_split, MPI\_Cart\_create, MPI\_Cart\_coords, MPI\_Cart\_sub, 
- MPI\_Graph\_create, MPI\_Dist\_graph\_create, а также навыки по работе
-  с коллективными операциями (например, MPI\_Bcast, MPI\_Reduce), обмену
-   сообщениями между процессами, созданию новых коммуникаторов и 
-   виртуальных топологий. В разных задачах ученик должен будет решать
-    разные задачи, например, отправлять и получать числа, находить 
-	минимальное значение, определять координаты процесса в топологии, 
-	отправлять данные из процессов в строке/столбце топологии и т.д.
+% \subsubsection{MPI2Send}
+
+% \lstset{language=c++}
+% \begin{lstlisting}
+% #include "tasklib.hpp"
+% #include "pt4utilities.hpp"
+
+% class utbMPI2Send : public TaskLib
+% {
+% private:
+% 	std::string task_group;
+
+% public:
+% 	utbMPI2Send();
+% 	virtual ~utbMPI2Send() {}
+
+% 	virtual void utb_print_task_info(int task_num, int language_option)
+% 	{
+% 		pt4_print_task_info(task_group, task_num, language_option);
+% 	}
+
+% 	virtual void utb_generate_task_test(int task_num, int test_num)
+% 	{
+% 		pt4_generate_task_test(task_group, task_num, test_num);
+% 	}
+
+% 	virtual void utb_generate_task_control(int task_num) {}
+
+% 	virtual void utb_print_extra_info(int task_num)
+% 	{
+% 		pt4_print_extra_info(task_group, task_num);
+% 	}
+
+% 	virtual int utb_check_program(int test_num) const
+% 	{
+% 		return pt4_check_program(task_group, test_num);
+% 	}
+
+% 	// friend class
+% 	friend class UnixTaskbook;
+% };
+
+% extern "C" TaskLib *create()
+% {
+% 	return new utbMPI2Send;
+% }
+
+% extern "C" void destroy(TaskLib *t)
+% {
+% 	delete t;
+% }
+
+% utbMPI2Send::utbMPI2Send()
+% {
+% #if defined __linux__
+% 	library_name = "libutbMPI2Send.so";
+% #elif defined __APPLE__
+% 	library_name = "libutbMPI2Send.dylib";
+% #endif
+
+% 	compiler = "mpicc";
+% 	compile_argv = {compiler, "-Wall", "-w", "", "ut1.c", "-o"};
+
+% 	execute_argv = {"mpiexec", "-np", std::to_string(pt4_mpi_get_size())};
+
+% 	task_group = "MPI2Send";
+% 	task_count = 32;
+% 	total_test_count = 3;
+
+% 	print_file = false;
+% 	print_task_info = true;
+% }
+
+% \end{lstlisting}
+
+% Задачи этой группы\cite{ref12} в основном связаны с коммуникацией с MPI (Message Passing Interface). 
+% Эти задачи включают отправку и получение данных с помощью MPI, как блокирующие, так 
+% и неблокирующие коммуникации, и проверяют навыки студентов в области программирования 
+% и параллельных вычислений. Задачи по блокирующей коммуникации проверяют знания 
+% студентов об использовании основных функций, таких как MPI\_Send и MPI\_Recv, а также 
+% о том, как выполнять операции сортировки и кэширования данных. Задачи по неблокирующей 
+% коммуникации проверяют, как студенты используют такие функции, как MPI\_Issend, 
+% MPI\_Wait, MPI\_Recv и MPI\_Test для асинхронной коммуникации и как справляться с 
+% проблемами отладки, которые могут возникнуть при параллельных вычислениях.
+
+% \subsubsection{MPI3Coll}
+
+% \lstset{language=c++}
+% \begin{lstlisting}
+% #include "tasklib.hpp"
+% #include "pt4utilities.hpp"
+
+% class utbMPI3Coll : public TaskLib
+% {
+% private:
+% 	std::string task_group;
+
+% public:
+% 	utbMPI3Coll();
+% 	virtual ~utbMPI3Coll() {}
+
+% 	virtual void utb_print_task_info(int task_num, int language_option)
+% 	{
+% 		pt4_print_task_info(task_group, task_num, language_option);
+% 	}
+
+% 	virtual void utb_generate_task_test(int task_num, int test_num)
+% 	{
+% 		pt4_generate_task_test(task_group, task_num, test_num);
+% 	}
+
+% 	virtual void utb_generate_task_control(int task_num) {}
+
+% 	virtual void utb_print_extra_info(int task_num)
+% 	{
+% 		pt4_print_extra_info(task_group, task_num);
+% 	}
+
+% 	virtual int utb_check_program(int test_num) const
+% 	{
+% 		return pt4_check_program(task_group, test_num);
+% 	}
+
+% 	// friend class
+% 	friend class UnixTaskbook;
+% };
+
+% extern "C" TaskLib *create()
+% {
+% 	return new utbMPI3Coll;
+% }
+
+% extern "C" void destroy(TaskLib *t)
+% {
+% 	delete t;
+% }
+
+% utbMPI3Coll::utbMPI3Coll()
+% {
+% #if defined __linux__
+% 	library_name = "libutbMPI3Coll.so";
+% #elif defined __APPLE__
+% 	library_name = "libutbMPI3Coll.dylib";
+% #endif
+
+% 	compiler = "mpicc";
+% 	compile_argv = {compiler, "-Wall", "-w", "", "ut1.c", "-o"};
+
+% 	execute_argv = {"mpiexec", "-np", std::to_string(pt4_mpi_get_size())};
+
+% 	task_group = "MPI3Coll";
+% 	task_count = 28;
+% 	total_test_count = 3;
+
+% 	print_file = false;
+% 	print_task_info = true;
+% }
+% \end{lstlisting}
+
+% Задачи этой группы\cite{ref13} относятся к параллельному программированию с использованием 
+% библиотеки MPI (Message Passing Interface) для обмена данными между процессами. В 
+% каждом вопросе ученику предлагается написать программу на языке программирования, 
+% которая выполняет определенную задачу с помощью функций MPI.
+
+% Задачи проверяют знание основных функций MPI для передачи данных между 
+% процессами, таких как MPI\_Bcast, MPI\_Gather, MPI\_Scatter, MPI\_Reduce и 
+% MPI\_Allreduce, а также способность к решению задач по передаче данных и 
+% совместной обработке данных между процессами. Решение этих задач помогает 
+% ученикам улучшить навыки в области параллельного программирования, такие как 
+% эффективное использование ресурсов, разбиение задач на небольшие подзадачи, передача 
+% данных между процессами и совместная обработка данных.
+
+% \subsubsection{MPI4Type}
+
+% \lstset{language=c++}
+% \begin{lstlisting}
+% #include "tasklib.hpp"
+% #include "pt4utilities.hpp"
+
+% class utbMPI4Type : public TaskLib
+% {
+% private:
+% 	std::string task_group;
+
+% public:
+% 	utbMPI4Type();
+% 	virtual ~utbMPI4Type() {}
+
+% 	virtual void utb_print_task_info(int task_num, int language_option)
+% 	{
+% 		pt4_print_task_info(task_group, task_num, language_option);
+% 	}
+
+% 	virtual void utb_generate_task_test(int task_num, int test_num)
+% 	{
+% 		pt4_generate_task_test(task_group, task_num, test_num);
+% 	}
+
+% 	virtual void utb_generate_task_control(int task_num) {}
+
+% 	virtual void utb_print_extra_info(int task_num)
+% 	{
+% 		pt4_print_extra_info(task_group, task_num);
+% 	}
+
+% 	virtual int utb_check_program(int test_num) const
+% 	{
+% 		return pt4_check_program(task_group, test_num);
+% 	}
+
+% 	// friend class
+% 	friend class UnixTaskbook;
+% };
+
+% extern "C" TaskLib *create()
+% {
+% 	return new utbMPI4Type;
+% }
+
+% extern "C" void destroy(TaskLib *t)
+% {
+% 	delete t;
+% }
+
+% utbMPI4Type::utbMPI4Type()
+% {
+% #if defined __linux__
+% 	library_name = "libutbMPI4Type.so";
+% #elif defined __APPLE__
+% 	library_name = "libutbMPI4Type.dylib";
+% #endif
+
+% 	compiler = "mpicc";
+% 	compile_argv = {compiler, "-Wall", "-w", "", "ut1.c", "-o"};
+
+% 	execute_argv = {"mpiexec", "-np", std::to_string(pt4_mpi_get_size())};
+
+% 	task_group = "MPI4Type";
+% 	task_count = 22;
+% 	total_test_count = 3;
+
+% 	print_file = false;
+% 	print_task_info = true;
+% }
+% \end{lstlisting}
+
+% Задачи этой группы\cite{ref14} относятся к параллельному программированию 
+% с использованием MPI (Message Passing Interface), протокола для 
+% обмена сообщениями между процессами, работающими на разных узлах 
+% вычислительного кластера. Задачи касаются создания и использования 
+% производных типов данных и упаковки данных для передачи между процессами.
+
+% Ученик проверяет свои знания по работе с MPI и способности 
+% создавать производные типы данных и эффективно упаковывать 
+% данные для передачи между процессами. Также ученик улучшает 
+% свои навыки работы с функциями MPI\_Send, MPI\_Recv, MPI\_Pack и 
+% MPI\_Unpack, а также создания новых типов данных с помощью 
+% функций MPI\_Type\_create\_resized и MPI\_Type\_struct. Кроме того, 
+% ученик практикует работу с коллективными операциями MPI.
+
+% \subsubsection{MPI5Comm}
+
+% \lstset{language=c++}
+% \begin{lstlisting}
+% #include "tasklib.hpp"
+% #include "pt4utilities.hpp"
+
+% class utbMPI5Comm : public TaskLib
+% {
+% private:
+% 	std::string task_group;
+
+% public:
+% 	utbMPI5Comm();
+% 	virtual ~utbMPI5Comm() {}
+
+% 	virtual void utb_print_task_info(int task_num, int language_option)
+% 	{
+% 		pt4_print_task_info(task_group, task_num, language_option);
+% 	}
+
+% 	virtual void utb_generate_task_test(int task_num, int test_num)
+% 	{
+% 		pt4_generate_task_test(task_group, task_num, test_num);
+% 	}
+
+% 	virtual void utb_generate_task_control(int task_num) {}
+
+% 	virtual void utb_print_extra_info(int task_num)
+% 	{
+% 		pt4_print_extra_info(task_group, task_num);
+% 	}
+
+% 	virtual int utb_check_program(int test_num) const
+% 	{
+% 		return pt4_check_program(task_group, test_num);
+% 	}
+
+% 	// friend class
+% 	friend class UnixTaskbook;
+% };
+
+% extern "C" TaskLib *create()
+% {
+% 	return new utbMPI5Comm;
+% }
+
+% extern "C" void destroy(TaskLib *t)
+% {
+% 	delete t;
+% }
+
+% utbMPI5Comm::utbMPI5Comm()
+% {
+% #if defined __linux__
+% 	library_name = "libutbMPI5Comm.so";
+% #elif defined __APPLE__
+% 	library_name = "libutbMPI5Comm.dylib";
+% #endif
+
+% 	compiler = "mpicc";
+% 	compile_argv = {compiler, "-Wall", "-w", "", "ut1.c", "-o"};
+
+% 	execute_argv = {"mpiexec", "-np", std::to_string(pt4_mpi_get_size())};
+
+% 	task_group = "MPI5Comm";
+% 	task_count = 32;
+% 	total_test_count = 3;
+
+% 	print_file = false;
+% 	print_task_info = true;
+% }
+% \end{lstlisting}
+
+% В задачах этой группы\cite{ref15} речь идет о программировании с использованием 
+% MPI (Message Passing Interface), который является стандартом для
+%  взаимодействия параллельных программ. Основной целью всех задач 
+%  является создание новых коммуникаторов и/или виртуальных топологий для
+%   обеспечения эффективного взаимодействия между процессами.
+
+% В задачах проверяются знания студента по использованию функций 
+% MPI\_Comm\_group, MPI\_Group\_incl, MPI\_Group\_excl, MPI\_Comm\_create,
+%  MPI\_Comm\_split, MPI\_Cart\_create, MPI\_Cart\_coords, MPI\_Cart\_sub, 
+%  MPI\_Graph\_create, MPI\_Dist\_graph\_create, а также навыки по работе
+%   с коллективными операциями (например, MPI\_Bcast, MPI\_Reduce), обмену
+%    сообщениями между процессами, созданию новых коммуникаторов и 
+%    виртуальных топологий. В разных задачах ученик должен будет решать
+%     разные задачи, например, отправлять и получать числа, находить 
+% 	минимальное значение, определять координаты процесса в топологии, 
+% 	отправлять данные из процессов в строке/столбце топологии и т.д.
 
 
 \newpage
