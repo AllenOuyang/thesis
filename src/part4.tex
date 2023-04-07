@@ -108,12 +108,15 @@ export LD_LIBRARY_PATH
     \caption{Log info.}%总标题
     \label{error}%总标签
 \end{figure}
-
-
+\\ \\ \\
 \subsection{Примеры использования разработанных групп заданий}
 
 \begin{figure}[htbp]%
     \centering
+    \subfloat[demo running]{%第一个子图
+    \label{demo}%子图标签
+    \includegraphics[width=0.8\linewidth]{images/demo.jpg}%子图文件名
+    }\\%换行
     \subfloat[right solution]{%第一个子图
     \label{right}%子图标签
     \includegraphics[width=0.8\linewidth]{images/right.jpg}%子图文件名
@@ -139,12 +142,22 @@ export LD_LIBRARY_PATH
 \end{figure}
 
 \begin{itemize} 
+    \item Демонстрация задания выводится перед выполнением теста, его логотип - \textbf{Demo running} \ref{demo};
     \item Если результаты всех процессов верны, на экране появляется \textbf{Right solution} \ref{right};
     \item Если выход процесса не соответствует правильному ответу, на экране появляется \textbf{Wrong solution} \ref{wrong}, где число в начале обозначает номер процесса;
     \item Если процесс пытается ввести или вывести данные, которые не соответствуют запрошенному типу, на экране появляется сообщение \textbf{Invalid type is used for an input/output data item} \ref{invalid}, где число в начале обозначает номер процесса;
     \item Если процесс пытается ввести или вывести лишние данные, на экране появляется \textbf{An attempt to input/output superfluous data} \ref{superfluous}, где число в начале обозначает номер процесса;
     \item Если данные в процессе не вводятся или не выводятся, на экране появляется \textbf{Data are not output/input} или \textbf{Some required data are not output/input}, где число в начале обозначает номер процесса;
 \end{itemize}
+
+Прежде чем приступить к написанию программы-задачи, мы можем выполнить \textbf{./runtest.cmd <имя\_задачи>}, чтобы посмотреть информацию о задаче.
+\begin{figure}[htbp]%
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/example.jpg}%子图文件名
+    \caption{info demo.}%总标题
+    \label{example}%总标签
+\end{figure}
+
 
 \subsubsection{MPI1Proc7}
 
@@ -540,7 +553,7 @@ int main()
 
 Мы намеренно создали ряд ошибок в различных процессах, в результате чего в конце было выведено несколько различных сообщений об ошибках \ref{wrong solution MPI4Type1}.
 
-\newpage
+%\newpage
 
 \subsubsection{MPI5Comm4}
 
