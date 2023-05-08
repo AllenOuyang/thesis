@@ -1,645 +1,226 @@
-\section{Функциональный и интерактивный интерфейс Unix Taskbook}
+\section{Модули для обработки и визуализации данных}
+С помощью предыдущего введения мы смогли сгенерировать необходимые данные и текст, но в настоящее время все данные и текст находятся в одном файле \textbf{\$\$pt4dat\$\$.dat}. Чтобы облегчить последующие манипуляции и визуализацию, мы также разработали два модуля \textbf{udata} и \textbf{uprint}.
+\subsection{Обработка данных}
+В модуле \textbf{udata} предусмотрен ряд функций для обработки данных и текста.
+\subsubsection{Загрузка данных и создание файлов данных}
+Функция \textbf{LoadData} считывает данные и текст из файла \textbf{\$\$pt4dat\$\$.dat} и сохраняет их в переменных.
 
-\subsection{Запуск задачника}
+\lstset{language=c++}
+\begin{lstlisting}
+void CreateAddFiles()
+{
+    std::ofstream f("ut1inf.dat");
+    f << "11" << std::endl;             // Taskbook version
+    f << cursize << std::endl;          // number of processes
+    f << NumberOfUsedData << std::endl; // number of used data (in the process 0);
+    f.close();
 
-\subsubsection{Установка MPICH в системе unix}
-Ниже описаны шаги по установке MPICH на различных системах UNIX:
+    for (int i = 0; i <= 100; i++)
+    {
+        if (std::filesystem::exists("ut1in" + std::to_string(i) + ".dat"))
+        {
+            std::filesystem::remove("ut1in" + std::to_string(i) + ".dat");
+        }
+        if (std::filesystem::exists("ut1out" + std::to_string(i) + ".dat"))
+        {
+            std::filesystem::remove("ut1out" + std::to_string(i) + ".dat");
+        }
+        if (std::filesystem::exists("ut1err" + std::to_string(i) + ".dat"))
+        {
+            std::filesystem::remove("ut1err" + std::to_string(i) + ".dat");
+        }
+        if (std::filesystem::exists("ut1sh" + std::to_string(i) + ".dat"))
+        {
+            std::filesystem::remove("ut1sh" + std::to_string(i) + ".dat");
+        }
+    }
+
+    std::ofstream file;
+    bool isOpen;
+    for (int i = 0; i < cursize; i++)
+    {
+        isOpen = false;
+        for (int j = 0; j < nidata; j++)
+        {
+            if (idata[j].r == i)
+            {
+                if (!isOpen)
+                {
+                    file.open("ut1in" + std::to_string(i) + ".dat");
+                    isOpen = true;
+                }
+                file << idata[j].id << std::endl;
+                switch (idata[j].id)
+                {
+                case 'b':
+                case 'i':
+                    file << std::round(idata[j].n) << std::endl; // TODO: this 'round' is dirfferent from the one in pascal
+                    break;
+                case 'r':
+                    file << idata[j].n << std::endl;
+                    break;
+                case 'c':
+                case 's':
+                    file << idata[j].s << std::endl;
+                    break;
+                }
+            }
+        }
+        if (isOpen)
+        {
+            file.close();
+        }
+    }
+}
+\end{lstlisting}
+\textbf{CreateAddFiles} затем записывает эти данные во вспомогательные файлы, которые используются при проверке решения.
 
 \begin{itemize}
-    \item Чтобы установить MPICH на Debian или Ubuntu:
-    \lstset{language=bash}
-    \begin{lstlisting}
-    sudo apt-get update
-    sudo apt-get install mpich
-    \end{lstlisting}
-    \item Чтобы установить MPICH на Fedora или CentOS:
-    \lstset{language=bash}
-    \begin{lstlisting}
-    sudo dnf update
-    sudo dnf install mpich
-    \end{lstlisting}
-    \item Чтобы установить MPICH на macOS:
-    \begin{lstlisting}
-    brew update
-    brew install mpich        
-    \end{lstlisting}
+    \item \textbf{ut1in}     - Хранение входных данных.
+    \item \textbf{ut1out}    - Хранение данных, полученных в результате работы учебных программ.
+    \item \textbf{ut1err}    - Хранение сообщений об ошибках.
+    \item \textbf{ut1sh}     - Хранение отладочной информации для учебных программ.
 \end{itemize}
 
-\subsubsection{Компиляция динамических библиотек}
-
-Чтобы получить динамические библиотеки, которые могут быть загружены ядром, мы 
-сначала должны скомпилировать файлы классов отдельных динамических библиотек, которые мы написали.
-
-Но когда количество динамических библиотек растет, компилировать их по отдельности и 
-вручную может быть хлопотно. Поэтому мы написали файл runlib.cmd для компиляции всех 
-необходимых динамических библиотек в одном файле.
-
-\centerline{\textbf{runlib.cmd}}
-
-\lstset{language=bash}
+\subsubsection{Проверка данных решения}
+\lstset{language=c++}
 \begin{lstlisting}
-#!/bin/bash
-if ! [ -d ./utblib ]; then mkdir ./utblib; fi
-g++ -fPIC -std=c++17 -Wno-attributes src/utbDir.cpp src/utilities.cpp -shared -o ./utblib/libutbDir.so
-g++ -fPIC -std=c++17 -Wno-attributes src/utbFile.cpp src/utilities.cpp -shared -o ./utblib/libutbFile.so
-g++ -fPIC -std=c++17 -Wno-attributes src/utbText.cpp src/utilities.cpp -shared -o ./utblib/libutbText.so
-g++ -fPIC -std=c++17 -Wno-attributes src/utbShell.cpp src/utilities.cpp -shared -o ./utblib/libutbShell.so
-g++ -fPIC -std=c++17 -Wno-attributes src/utbBegin.cpp src/pt4utilities.cpp src/udata.cpp src/uprint.cpp -shared -o ./utblib/libutbBegin.so
-g++ -fPIC -std=c++17 -Wno-attributes src/utbMPI1Proc.cpp src/pt4utilities.cpp src/udata.cpp src/uprint.cpp -shared -o ./utblib/libutbMPI1Proc.so
-g++ -fPIC -std=c++17 -Wno-attributes src/utbMPI2Send.cpp src/pt4utilities.cpp src/udata.cpp src/uprint.cpp -shared -o ./utblib/libutbMPI2Send.so
-g++ -fPIC -std=c++17 -Wno-attributes src/utbMPI3Coll.cpp src/pt4utilities.cpp src/udata.cpp src/uprint.cpp -shared -o ./utblib/libutbMPI3Coll.so
-g++ -fPIC -std=c++17 -Wno-attributes src/utbMPI4Type.cpp src/pt4utilities.cpp src/udata.cpp src/uprint.cpp -shared -o ./utblib/libutbMPI4Type.so
-g++ -fPIC -std=c++17 -Wno-attributes src/utbMPI5Comm.cpp src/pt4utilities.cpp src/udata.cpp src/uprint.cpp -shared -o ./utblib/libutbMPI5Comm.so
-\end{lstlisting}
-
-Перед компиляцией мы проверим, существует ли каталог utblib в каталоге текущего
- пользователя, если нет, то он будет создан автоматически, и все динамические
-  библиотеки будут автоматически сохранены в этом каталоге после компиляции, чтобы 
-  мы могли легко управлять и находить динамические библиотеки в будущем.
-
-Чтобы запустить cmd-файл, нам нужно убедиться, что все файлы классов динамической 
-библиотеки находятся в том же каталоге, что и cmd-файл, а затем выполнить команду \textbf{./runlib.cmd}
-
-\subsubsection{Компиляция ядра}
-
-Следующим шагом будет компиляция для получения исполняемого файла unixTaskbook.
-
-Из-за большого количества файлов и параметров компиляции, необходимых для 
-компиляции, мы написали файл run.cmd, чтобы упростить команду компиляции.
-
-\centerline{\textbf{run.cmd}}
-
-\lstset{language=bash}
-\begin{lstlisting}
-#!/bin/bash
-g++ main.cpp unixTaskbook.cpp utilities.cpp tasklib.cpp error.cpp service.cpp -o unixTaskbook -ldl
-\end{lstlisting}
-
-Чтобы запустить cmd-файл, нам нужно убедиться, что все файлы классов динамической 
-библиотеки находятся в том же каталоге, что и cmd-файл, а затем выполнить команду \textbf{./run.cmd}
-
-\subsubsection{Выполнение тестов}
-
-После компиляции всех необходимых файлов, чтобы начать использовать unixTaskbook, нам 
-нужно написать тестовый файл, выбрать задачу, которую мы хотим выполнить, создать .c файл 
-с именем задачи и передать имя файла в качестве параметра выполнения в файл runtest.cmd, и 
-мы можем начать выполнение теста.
-
-Например, мы хотим выполнить задачу 7 в группе задач MPI1Proc: 
-\\ \textbf{./runtest.cmd MPI1Proc7.c}
-
-\centerline{\textbf{runtest.cmd}}
-
-\lstset{language=bash}
-\begin{lstlisting}
-#!/bin/bash
-LD_LIBRARY_PATH=~/utblib
-export LD_LIBRARY_PATH
-../unixTaskbook -t $1
-\end{lstlisting}
-
-В файле runtest.cmd мы экспортируем переменную LD\_LIBRARY\_PATH, 
-которая сообщает компилятору, где находятся все динамические библиотеки.
-
-Во время выполнения написанные нами тестовые файлы компилируются, и если в процессе компиляции что-то пойдет не так, на экран будет выведено сообщение об ошибке \ref{error}.
-\begin{figure}[htbp]%
-    \centering
-    \includegraphics[width=1\linewidth]{images/error.jpg}%子图文件名
-    \caption{Log info.}%总标题
-    \label{error}%总标签
-\end{figure}
-\\ \\ \\
-\subsection{Примеры использования разработанных групп заданий}
-
-\begin{figure}[htbp]%
-    \centering
-    \subfloat[demo running]{%第一个子图
-    \label{demo}%子图标签
-    \includegraphics[width=0.8\linewidth]{images/demo.jpg}%子图文件名
-    }\\%换行
-    \subfloat[right solution]{%第一个子图
-    \label{right}%子图标签
-    \includegraphics[width=0.8\linewidth]{images/right.jpg}%子图文件名
-    }\\%换行
-    \subfloat[wrong solution]{%第二个子图
-    \label{wrong}%子图标签
-    \includegraphics[width=0.8\linewidth]{images/wrong.jpg}%子图文件名
-    }\\%换行
-    \subfloat[invalid data]{%第三个子图
-    \label{invalid}%子图标签
-    \includegraphics[width=0.8\linewidth]{images/invalid.jpg}%子图文件名
-    }\\%换行
-    \subfloat[superfluous data]{%第四个子图
-    \label{superfluous}%子图标签
-    \includegraphics[width=0.8\linewidth]{images/superfluous.jpg}%子图文件名
-    }\\
-    \subfloat[lack of data]{%第五个子图
-    \label{lack}%子图标签
-    \includegraphics[width=0.8\linewidth]{images/notoutput.jpg}%子图文件名
+bool CheckAllResults()
+{
+    nrdata = 0;
+    check_result = true;
+    headerinfos.assign(cursize, "");
+    odata_procs.resize(cursize);
+    for (int i = 0; i < cursize; ++i)
+    {
+        std::vector<TData> odata_i;
+        for (int j = 0; j < nodata; ++j)
+        {
+            if (odata[j].r == i)
+            {
+                odata_i.emplace_back(odata[j]);
+            }
+        }
+        odata_procs[i] = odata_i;
+        if (i == 0)
+            continue;
+        check_result = CheckResults(i) && check_result;
     }
-    \caption{Task info.}%总标题
-    \label{task info}%总标签
-\end{figure}
 
-\begin{itemize} 
-    \item Демонстрация задания выводится перед выполнением теста, его логотип - \textbf{Demo running} \ref{demo};
-    \item Если результаты всех процессов верны, на экране появляется \textbf{Right solution} \ref{right};
-    \item Если выход процесса не соответствует правильному ответу, на экране появляется \textbf{Wrong solution} \ref{wrong}, где число в начале обозначает номер процесса;
-    \item Если процесс пытается ввести или вывести данные, которые не соответствуют запрошенному типу, на экране появляется сообщение \textbf{Invalid type is used for an input/output data item} \ref{invalid}, где число в начале обозначает номер процесса;
-    \item Если процесс пытается ввести или вывести лишние данные, на экране появляется \textbf{An attempt to input/output superfluous data} \ref{superfluous}, где число в начале обозначает номер процесса;
-    \item Если данные в процессе не вводятся или не выводятся, на экране появляется \textbf{Data are not output/input} или \textbf{Some required data are not output/input}, где число в начале обозначает номер процесса;
+    if (check_result)
+        check_result = CheckResults(0);
+    else
+    {
+        CheckResults(0);
+        headerinfos[0] = WrongSolutionMsg;
+    }
+
+    return check_result;
+}
+\end{lstlisting}
+Функция \textbf{CheckAllResults} вызывается pt4utilities и проверяет решение каждого процесса.
+
+Функция CheckResults вызывается для проверки решения отдельного процесса. Она будет сравнивать один за другим данные, выведенные учебной программой, с данными правильного решения, если они все одинаковые, то оно правильное, если в нем разные данные, то учебная программа ошибается.
+
+\subsection{Визуализация данных}
+Визуализация данных имеет решающее значение для обеспечения хорошего интерактивного интерфейса для пользователей. Модули udata и uprint предоставляют ряд функций для достижения этой цели.
+
+\subsubsection{Основные функции визуализации}
+Эта часть была выполнена другим автором, Чжан Инцин, который построил основные рамки интерфейса программы, такие как границы интерфейса.
+Далее приведен пример одной из таких функций.
+
+\lstset{language=c++}
+\begin{lstlisting}
+// print header info
+void PrintHeader(const std::string RunInfo)
+{
+    std::vector<std::string> s(2);
+    std::string s1 = InitString(' ');
+    std::string s0 = InitString(box_drawings::LIGHT_HORIZONTAL);
+    PrintCmt(s0, GrTopic + std::to_string(TaskNumber) + " [" + GrDescr + "] ", 4);
+    PrintCmt(s0, '(' + std::to_string(TestNumber) + ')', 75);
+    s[0] = s0;
+    std::cout << theme_bg << border_color << box_drawings::LIGHT_DOWN_AND_RIGHT << s[0]
+              << box_drawings::LIGHT_DOWN_AND_LEFT << colors::RESET << std::endl;
+    s[1] = s1;
+    PrintCmt(s[1], RunInfo, 2);
+    std::string bg_color = check_bg(RunInfo);
+    std::cout << theme_bg << border_color << box_drawings::LIGHT_VERTICAL << bg_color << colors::WHITE << s[1]
+              << colors::RESET << theme_bg << border_color << box_drawings::LIGHT_VERTICAL << colors::RESET << std::endl;
+}
+\end{lstlisting}
+Функция \textbf{PrintHeader} используется для печати заголовочной информации интерфейса. 
+
+Чтобы добиться эффекта непрерывной границы, мы используем для печати границ кодировку Unicode, определенную в заголовочном файле \textbf{box\_drawing}.
+
+Функция PrintCmt определена и реализована в uprint, и она гарантирует, что каждая строка вывода на терминал будет одинаковой длины.
+
+
+\subsubsection{Обработка цвета}
+Чтобы сделать интерфейс более эстетически приятным, цвета всего интерфейса были тщательно обработаны.
+
+Сначала мы разделим все цвета в интерфейсе на цвет фона, цвет границы, цвет текста и цвет данных.
+
+\lstset{language=c++}
+\begin{lstlisting}
+std::string Colorize(const std::string &text)
+{
+
+    std::regex special_pattern(R"(\s*(\d+)\|\s*(\d+)\>\s*(.*))");
+    if (std::regex_match(text, special_pattern))
+    {
+        return text;
+    }
+
+    std::regex pattern(R"((-?(true|false|\d+(\.\d+)?)))");
+
+    std::string colored_text = std::regex_replace(text, pattern, colors::RESET + theme_bg + data_color + "$&" + colors::RESET + theme_bg + text_color);
+
+    return ProcessString(colored_text);
+}
+\end{lstlisting}
+
+Функция \textbf{Colorize} используется для установки цвета данных, где регулярное выражение используется для поиска данных, цвет которых необходимо изменить.
+
+\begin{itemize}
+    \item \textbf{theme\_bg} - Определяет ASCII-код для цвета фона.
+    \item \textbf{text\_color} - Определяет ASCII-код цвета текста.
+    \item \textbf{data\_color} - Определяет ASCII-код цвета данных.
+    \item \textbf{border\_color} - Определяет ASCII-код для цвета границы.
 \end{itemize}
 
-Прежде чем приступить к написанию программы-задачи, мы можем выполнить \textbf{./runtest.cmd <имя\_задачи>}, чтобы посмотреть информацию о задаче.
-\begin{figure}[htbp]%
-    \centering
-    \includegraphics[width=0.8\linewidth]{images/example.jpg}%子图文件名
-    \caption{info demo.}%总标题
-    \label{example}%总标签
-\end{figure}
+Функции, используемые для вывода остальной части интерфейса, также используют коды ASCII для указания всех цветов. Эти цвета определяются перед сгенерированным интерфейсом и позволяют пользователю настраивать эти цвета.
 
+Чтобы реализовать функцию пользовательского цвета, мы добавили файл конфигурации \textbf{config.yml}.
 
-\subsubsection{MPI1Proc7}
-
-\begin{figure}[htbp]%
-    \centering
-    \subfloat[Правильно]{%第一个子图
-    \label{righ solution MPI1Proc7}%子图标签
-    \includegraphics[width=0.5\linewidth]{images/mpi1_eg_r.jpg}%子图文件名
-    }\hfill%水平间距
-    \subfloat[Неисправность]{%第二个子图
-    \label{wrong solution MPI1Proc7}%子图标签
-    \includegraphics[width=0.5\linewidth]{images/mpi1_eg_w.jpg}%子图文件名
-    }
-    \caption{MPI1Proc.}%总标题
-    \label{mpi1proc}%总标签
-\end{figure}
-
-% \begin{figure}[htbp]%
-%     \centering
-%     \includegraphics[width=0.6\linewidth]{images/mpi1_eg_r.jpg}%子图文件名
-%     \caption{MPI1Proc.}%总标题
-%     \label{mpi1proc}%总标签
-% \end{figure}
-
-\lstset{language=c++}
+\lstset{language=bash}
 \begin{lstlisting}
-#include "ut1.h"
-int main()
-{
-    MPI_Init(NULL, NULL);
-    int rank, size;
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    if (!(rank % 2)) {
-        int n;
-        double num;
-        double sum = 0;
-        GetN(&n);
-        for (int i = 0; i < n; ++i) {
-            GetD(&num);
-            sum += num;
-        }
-        PutD(sum);
-    }
-    MPI_Finalize();
-}
+# This is a configuration file for the app's colors.
+# The file specifies the RGB values for each of the five colors used in the app.
+
+# Define the RGB value for the background color.
+theme_bg: [0, 0, 50] # Black
+
+# Define the RGB value for the data color.
+data_color: [255, 255, 200] # Yellow
+
+# Define the RGB value for the text color.
+text_color: [128, 128, 200] # Gray
+
+# Define the RGB value for the border color.
+border_color: [255, 255, 255] # White
 \end{lstlisting}
 
-Код выводит правильный ответ \ref{righ solution MPI1Proc7}.
-
-\lstset{language=c++}
-\begin{lstlisting}
-#include "ut1.h"
-int main()
-{
-    MPI_Init(NULL, NULL);
-    int rank, size;
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    if (rank == 0) {
-        int n;
-        double num;
-        double sum = 0;
-        GetN(&n);
-        for (int i = 0; i < n; ++i) {
-            GetD(&num);
-            sum += num;
-        }
-        PutD(sum + 1);
-    }
-
-    if (rank == 1) {
-        int n;
-        double num;
-        double sum = 0;
-        GetN(&n);
-        for (int i = 0; i < n; ++i) {
-            sum += num;
-        }
-        PutD(sum);
-    }
-
-    if (rank == 2) {
-        int n;
-        int num;
-        double sum = 0;
-        GetN(&n);
-        for (int i = 0; i < n; ++i) {
-            GetN(&num);
-            sum += num;
-        }
-        PutD(sum + 1);
-    }
-
-    if (rank == 3) {
-        int n;
-        double num;
-        double sum = 0;
-        GetN(&n);
-        GetN(&n);
-        for (int i = 0; i < n; ++i) {
-            GetD(&num);
-            sum += num;
-        }
-        PutD(sum);
-    }
-
-    if (rank == 4) {
-        int n;
-        double num;
-        double sum = 0;
-        GetN(&n);
-        for (int i = 0; i < n; ++i) {
-            GetD(&num);
-            sum += num;
-        }
-        PutD(sum);
-        PutD(sum);
-    }
-
-    if (rank == 5) {
-        int n;
-        double num;
-        double sum = 0;
-        GetN(&n);
-        for (int i = 0; i < n; ++i) {
-            GetD(&num);
-            sum += num;
-        }
-        PutD(sum);
-    }
-
-    if (rank == 6) {
-        int n;
-        double num;
-        double sum = 0;
-        GetN(&n);
-        for (int i = 0; i < n; ++i) {
-            GetD(&num);
-            sum += num;
-        }
-        PutD(sum);
-    }
-
-    if (rank == 7) {
-        int n;
-        double num;
-        double sum = 0;
-        GetN(&n);
-        for (int i = 0; i < n; ++i) {
-            GetD(&num);
-            sum += num;
-        }
-        PutD(sum);
-    }
-
-    
-    MPI_Finalize();
-}
-\end{lstlisting}
-
-Мы намеренно создали ряд ошибок в различных процессах, в результате чего в конце было выведено несколько различных сообщений об ошибках \ref{wrong solution MPI1Proc7}.
-
-\newpage
-
-\subsubsection{MPI2Send1}
+Перед созданием интерфейс программа считывает RGB-коды для этих цветов из этого профиля. Затем эти значения присваиваются соответствующим цветовым переменным.
 
 \begin{figure}[htbp]%
     \centering
-    \subfloat[Правильно]{%第一个子图
-    \label{righ solution MPI2Send1}%子图标签
-    \includegraphics[width=0.5\linewidth]{images/mpi2_eg_r.jpg}%子图文件名
-    }\hfill%水平间距
-    \subfloat[Неисправность]{%第二个子图
-    \label{wrong solution MPI2Send1}%子图标签
-    \includegraphics[width=0.5\linewidth]{images/mpi2_eg_w.jpg}%子图文件名
-    }
-    \caption{MPI2Send.}%总标题
-    \label{mpi2send}%总标签
+    \includegraphics[width=0.9\linewidth]{images/color_example.jpg}%子图文件名
+    \caption{Примеры тем.}%总标题
+    \label{theme}%总标签
 \end{figure}
 
-\lstset{language=c++}
-\begin{lstlisting}
-#include "ut1.h"
-int main()
-{
-    MPI_Init(NULL, NULL);
-    int rank, size;
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    int n;
+Это изображение\ref{theme} демонстрирует эффект, достигаемый с помощью данного профиля.
 
-    if (!rank) {
-        for (int i = 1; i < size; ++i) {
-            MPI_Recv(&n, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            PutN(n);
-        }
-    }
-    else {
-        GetN(&n);
-        MPI_Send(&n, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-    }
-	MPI_Finalize();
-}
-\end{lstlisting}
+Однако следует отметить, что если вы хотите, чтобы пользовательская тема вступила в силу, необходимо добавить параметр \textbf{-c custom} после команды unixTaskbook в файле \textbf{runtest.cmd}.
 
-Код выводит правильный ответ \ref{righ solution MPI2Send1}.
-
-\lstset{language=c++}
-\begin{lstlisting}
-#include "ut1.h"
-int main()
-{
-    MPI_Init(NULL, NULL);
-    int rank, size;
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    int n;
-
-    if (!rank) {
-        for (int i = 1; i < size; ++i) {
-            MPI_Recv(&n, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            PutN(n + 1);
-        }
-    }
-    else {
-        GetN(&n);
-        MPI_Send(&n, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-        if (rank == 1)
-            PutN(n);
-    }
-	MPI_Finalize();
-}
-\end{lstlisting}
-
-Мы намеренно создали ряд ошибок в различных процессах, в результате чего в конце было выведено несколько различных сообщений об ошибках \ref{wrong solution MPI2Send1}.
-
-\newpage
-
-\subsubsection{MPI3Coll2}
-
-\begin{figure}[htbp]%
-    \centering
-    \subfloat[Правильно]{%第一个子图
-    \label{righ solution MPI3Coll2}%子图标签
-    \includegraphics[width=0.5\linewidth]{images/mpi3_eg_r.jpg}%子图文件名
-    }\hfill%水平间距
-    \subfloat[Неисправность]{%第二个子图
-    \label{wrong solution MPI3Coll2}%子图标签
-    \includegraphics[width=0.5\linewidth]{images/mpi3_eg_w.jpg}%子图文件名
-    }
-    \caption{MPI3Coll.}%总标题
-    \label{mpi3coll}%总标签
-\end{figure}
-
-\lstset{language=c++}
-\begin{lstlisting}
-#include "ut1.h"
-int main()
-{
-	MPI_Init(NULL, NULL);
-	int rank, size;
-	MPI_Comm_size(MPI_COMM_WORLD, &size);
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	double numbers[5];
-	if (rank == 0)
-		for (int i = 0; i < 5; ++i)
-			GetD(&numbers[i]);
-	MPI_Bcast(&numbers, 5, MPI_DOUBLE, rank, MPI_COMM_WORLD);
-	if (rank != 0)
-		for (int i = 0; i < 5; ++i)
-			PutD(numbers[i]);
-
-	MPI_Finalize();
-}
-\end{lstlisting}
-
-Код выводит правильный ответ \ref{righ solution MPI3Coll2}.
-
-\lstset{language=c++}
-\begin{lstlisting}
-#include "ut1.h"
-int main()
-{
-	MPI_Init(NULL, NULL);
-	int rank, size;
-	MPI_Comm_size(MPI_COMM_WORLD, &size);
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	double numbers[5];
-	if (rank == 0)
-		for (int i = 0; i < 5; ++i)
-			GetD(&numbers[(i+1)%4]);
-	MPI_Bcast(&numbers, 5, MPI_DOUBLE, rank, MPI_COMM_WORLD);
-	if (rank != 0)
-		for (int i = 0; i < 5; ++i)
-			PutD(numbers[i]+1);
-
-	MPI_Finalize();
-}
-\end{lstlisting}
-
-Мы намеренно создали ряд ошибок в различных процессах, в результате чего в конце было выведено несколько различных сообщений об ошибках \ref{wrong solution MPI3Coll2}.
-
-\newpage
-
-\subsubsection{MPI4Type1}
-
-\begin{figure}[htbp]%
-    \centering
-    \subfloat[Правильно]{%第一个子图
-    \label{righ solution MPI4Type1}%子图标签
-    \includegraphics[width=0.5\linewidth]{images/mpi4_eg_r.jpg}%子图文件名
-    }\hfill%水平间距
-    \subfloat[Неисправность]{%第二个子图
-    \label{wrong solution MPI4Type1}%子图标签
-    \includegraphics[width=0.5\linewidth]{images/mpi4_eg_w.jpg}%子图文件名
-    }
-    \caption{MPI4Type.}%总标题
-    \label{mpi4type}%总标签
-\end{figure}
-
-\lstset{language=c++}
-\begin{lstlisting}
-#include "ut1.h"
-int main()
-{
-	MPI_Init(NULL, NULL);
-	int rank, size;
-	MPI_Comm_size(MPI_COMM_WORLD, &size);
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-	MPI_Datatype newtype;
-	MPI_Type_contiguous(3, MPI_INT, &newtype);
-	MPI_Type_commit(&newtype);
-
-	int *numbers = (int*)malloc((size - 1) * 3 * sizeof(int));
-
-	if (rank == 0)
-		for (int i = 0; i < (size - 1) * 3; ++i)
-			GetN(&numbers[i]);
-
-	MPI_Bcast(numbers, size - 1, newtype, 0, MPI_COMM_WORLD);
-
-	if (rank != 0)
-		for (int i = 0; i < (size - 1) * 3; ++i)
-			PutN(numbers[i]);
-
-	MPI_Type_free(&newtype);
-	free(numbers);
-	numbers = NULL;
-	MPI_Finalize();
-}
-\end{lstlisting}
-
-Код выводит правильный ответ \ref{righ solution MPI4Type1}.
-
-\lstset{language=c++}
-\begin{lstlisting}
-#include "ut1.h"
-int main()
-{
-	MPI_Init(NULL, NULL);
-	int rank, size;
-	MPI_Comm_size(MPI_COMM_WORLD, &size);
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-	MPI_Datatype newtype;
-	MPI_Type_contiguous(3, MPI_INT, &newtype);
-	MPI_Type_commit(&newtype);
-
-	int *numbers = (int*)malloc((size - 1) * 3 * sizeof(int));
-
-	if (rank == 0)
-		for (int i = 0; i < (size - 1) * 3 + 1; ++i)
-			GetN(&numbers[i]);
-
-	MPI_Bcast(numbers, size - 1, newtype, 0, MPI_COMM_WORLD);
-
-	if (rank != 0)
-		for (int i = 0; i < (size - 1) * 3; ++i)
-		{
-			PutN(numbers[i]);
-			if (rank == 1)
-				PutN(numbers[i]);
-		}
-
-	MPI_Type_free(&newtype);
-	free(numbers);
-	numbers = NULL;
-	MPI_Finalize();
-}
-\end{lstlisting}
-
-Мы намеренно создали ряд ошибок в различных процессах, в результате чего в конце было выведено несколько различных сообщений об ошибках \ref{wrong solution MPI4Type1}.
-
-%\newpage
-
-\subsubsection{MPI5Comm4}
-
-\begin{figure}[htbp]%
-    \centering
-    \subfloat[Правильно]{%第一个子图
-    \label{righ solution MPI5Comm4}%子图标签
-    \includegraphics[width=0.5\linewidth]{images/mpi5_eg_r.jpg}%子图文件名
-    }\hfill%水平间距
-    \subfloat[Неисправность]{%第二个子图
-    \label{wrong solution MPI5Comm4}%子图标签
-    \includegraphics[width=0.5\linewidth]{images/mpi5_eg_w.jpg}%子图文件名
-    }
-    \caption{MPI5Comm.}%总标题
-    \label{mpi5comm}%总标签
-\end{figure}
-
-\lstset{language=c++}
-\begin{lstlisting}
-#include "ut1.h"
-int main()
-{
-	MPI_Init(NULL, NULL);
-	int rank, size;
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	MPI_Comm_size(MPI_COMM_WORLD, &size);
-
-	MPI_Group even;
-	MPI_Comm even_comm;
-	int color = rank % 2;
-	MPI_Comm_split(MPI_COMM_WORLD, color, rank, &even_comm);
-
-	if (rank % 2 == 0)
-	{
-		double nums[3];
-		for (int i = 0; i < 3; ++i)
-			GetD(&nums[i]);
-		double result[3];
-		MPI_Reduce(nums, result, 3, MPI_DOUBLE, MPI_MIN, 0, even_comm);
-		if (rank == 0)
-			for (int i = 0; i < 3; ++i)
-				PutD(result[i]);
-	}
-	MPI_Finalize();
-}
-\end{lstlisting}
-
-Код выводит правильный ответ \ref{righ solution MPI5Comm4}.
-
-\lstset{language=c++}
-\begin{lstlisting}
-#include "ut1.h"
-int main()
-{
-	MPI_Init(NULL, NULL);
-	int rank, size;
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	MPI_Comm_size(MPI_COMM_WORLD, &size);
-
-	MPI_Group even;
-	MPI_Comm even_comm;
-	int color = rank % 2;
-	MPI_Comm_split(MPI_COMM_WORLD, color, rank, &even_comm);
-
-	if (rank == 1)
-	{
-		double a;
-		GetD(&a);
-	}
-	if (rank % 2 == 0)
-	{
-		double nums[3];
-		for (int i = 0; i < 3; ++i)
-			GetD(&nums[i]);
-		if (rank != 0)
-			PutD(nums[0]);
-		double result[3];
-		MPI_Reduce(nums, result, 3, MPI_DOUBLE, MPI_MIN, 0, even_comm);
-		if (rank == 0)
-			for (int i = 0; i < 3; ++i)
-				PutD(result[i] + 1);
-	}
-	MPI_Finalize();
-}
-\end{lstlisting}
-
-Мы намеренно создали ряд ошибок в различных процессах, в результате чего в конце было выведено несколько различных сообщений об ошибках \ref{wrong solution MPI5Comm4}.
-
-\newpage

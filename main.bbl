@@ -1,0 +1,133 @@
+\begin{thebibliography}{10}
+\def\selectlanguageifdefined#1{
+\expandafter\ifx\csname date#1\endcsname\relax
+\else\language\csname l@#1\endcsname\fi}
+\ifx\undefined\url\def\url#1{{\small #1}}\else\fi
+\ifx\undefined\BibUrl\def\BibUrl#1{\url{#1}}\else\fi
+\ifx\undefined\BibDoi\def\BibDoi#1{DOI:
+  \href{https://doi.org/#1}{\detokenize{#1}}}\else\fi
+\ifx\undefined\BibAnnote\long\def\BibAnnote#1{}\else\fi
+\ifx\undefined\BibEmph\def\BibEmph#1{\emph{#1}}\else\fi
+
+\bibitem{ref1}
+\selectlanguageifdefined{he}
+\BibEmph{Э.,~Абрамян~М.} Электронный задачник по
+  курсу «Операционные системы» /
+  Современные информационные технологии:
+  тенденции и перспективы развития.
+  Материалы XXIX научной конференции~/
+  Абрамян~М.~Э., Ли~Шэнюй. ---
+\newblock Ростов н/Д, Таганрог: Изд-во ЮФУ. ---
+\newblock P.~22–24.
+
+\bibitem{ref2}
+\selectlanguageifdefined{ru}
+\BibEmph{Э,~Абрамян~М.} Электронный задачник по
+  параллельному программированию на базе
+  интерфейса MPI стандарта 2.0 // Современные
+  информационные технологии и
+  ИТ-образование. 2017~/ Абрамян~М.~Э~//
+  \BibEmph{Том}. ---
+\newblock Vol.~13, no. 4. С. ---
+\newblock P.~91–104.
+
+\bibitem{ref18}
+\selectlanguageifdefined{english}
+\BibEmph{Абрамян,~М.~Э.} Инструменты и методы
+  разработки электронных образовательных
+  ресурсов по компьютерным наукам:
+  монография~/ М.~Э.~Абрамян. ---
+\newblock Ростов н/Д, Таганрог: Изд-во ЮФУ, 2018. ---
+\newblock P.~260.
+
+\bibitem{ref19}
+\selectlanguageifdefined{english}
+\BibEmph{Абрамян,~М.~Э.} Об архитектуре
+  универсального электронного задачника по
+  программированию~/ М.~Э.~Абрамян~//
+  \BibEmph{Информатизация образования и науки}.
+  ---
+\newblock 2015. ---
+\newblock no. 3 (27). ---
+\newblock P.~134–150.
+
+\bibitem{ref20}
+\selectlanguageifdefined{he}
+\BibEmph{Э.,~Абрамян~М.} Электронный задачник по
+  курсу «Операционные системы» /
+  Современные информационные технологии:
+  тенденции и перспективы развития.
+  Материалы XXIX научной конференции~/
+  Абрамян~М.~Э., Ли~Шэнюй. ---
+\newblock Ростов н/Д, Таганрог: Изд-во ЮФУ. ---
+\newblock P.~9–11.
+
+\bibitem{ref3}
+\selectlanguageifdefined{english}
+\BibEmph{Gropp,~William}. Using MPI-2: advanced features of the message-passing
+  interface~/ William~Gropp, Ewing~Lusk, Rajeev~Thakur. ---
+\newblock MIT press, 1999.
+
+\bibitem{ref5}
+\selectlanguageifdefined{english}
+\BibEmph{Balaji,~Pavan}. Mpi on millions of cores~/ Pavan~Balaji,
+  Darius~Buntinas, David~Goodell, William~Gropp, Torsten~Hoefler, Sameer~Kumar,
+  Ewing~Lusk, Guillaume~Mercier, Ken~Raffenetti, Rajeev~Thakur~//
+  \BibEmph{Parallel Processing Letters}. ---
+\newblock 2009. ---
+\newblock Vol.~19, no.~01. ---
+\newblock Pp.~45--60.
+
+\bibitem{ref4}
+\selectlanguageifdefined{english}
+\BibEmph{Thakur,~Rajeev}. Optimization of collective communication operations
+  in MPICH~/ Rajeev~Thakur, Rolf~Rabenseifner, William~Gropp~// \BibEmph{The
+  International Journal of High Performance Computing Applications}. ---
+\newblock 2005. ---
+\newblock Vol.~19, no.~1. ---
+\newblock Pp.~49--66.
+
+\bibitem{ref7}
+\selectlanguageifdefined{english}
+\BibEmph{Gropp,~William}. Using MPI: portable parallel programming with the
+  message-passing interface~/ William~Gropp, Ewing~Lusk, Rajeev~Thakur. ---
+\newblock MIT press, 2006.
+
+\bibitem{ref8}
+\selectlanguageifdefined{english}
+\BibEmph{user1260391}. How to compile MPI with gcc? - Stack Overflow~/
+  ~user1260391 et~al. ---
+\newblock
+  \url{https://stackoverflow.com/questions/11312719/how-to-compile-mpi-with-gcc}.
+  ---
+\newblock 2012.
+
+\bibitem{ref9}
+\selectlanguageifdefined{english}
+Open MPI Project. ---
+\newblock mpicc(1) man page (version 3.0.6) - Open MPI, 2020.
+
+\bibitem{ref10}
+\selectlanguageifdefined{english}
+\BibEmph{Computing,~USC~Research}. Open MPI Tutorial - GitHub Pages. ---
+\newblock \url{https://usc-rc.github.io/tutorials/open-mpi}.
+
+\bibitem{ref6}
+\selectlanguageifdefined{english}
+\BibEmph{Gropp,~William}. Using MPI: portable parallel programming with the
+  message-passing interface~/ William~Gropp, Ewing~Lusk, Rajeev~Thakur. ---
+\newblock MIT press, 2006.
+
+\bibitem{cppreference}
+\selectlanguageifdefined{english}
+\BibEmph{Cppreference}. Filesystem library (since C++17). ---
+\newblock 2021. ---
+\newblock [Online; accessed 6-April-2021].
+  \BibUrl{https://en.cppreference.com/w/cpp/filesystem}.
+
+\bibitem{ref11}
+\selectlanguageifdefined{english}
+\BibEmph{Э,~Абрамян~М.} Programming Taskbook - MPI1Proc. ---
+\newblock \url{https://ptaskbook.com/en/ptformpi2/mpi1proc.php}.
+
+\end{thebibliography}
